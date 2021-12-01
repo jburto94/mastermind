@@ -2,10 +2,11 @@ require_relative 'colors'
 require_relative 'hint'
 require_relative 'player'
 require_relative 'display'
+require "colorize"
 
 class Game
   attr_accessor :turn, :player, :hint
-  attr_reader :display
+  attr_reader :display, :code
   
   COLORS = Colors.new.keys
 
@@ -38,11 +39,33 @@ class Game
   end
 
   def guess
-    # until valid_guess(player_guess)
-      # Display.get_guess
-    # end
+    @turn += 1
+    player_guess = []
 
-    # check_guess
+    until valid_code?(player_guess)
+      player_guess = display.get_guess(turn)
+      exit if player_guess.length == 1 && player_guess[0] == 'q'
+
+      player_guess.map!(&:to_i)
+
+      unless valid_code?(player_guess)
+        puts "Your code must be 4 digits, using numbers 1-6.".colorize(:red)
+      end
+    end
+    
+    check_guess(player_guess)
+
+    guess_codes = []
+    player_guess.each do |guess_code|
+      guess_codes << COLORS.find { |color| color[:val] == guess_code }
+    end
+
+    guess_codes
+  end
+
+  def valid_code?(guess)
+    return false unless guess.length == 4
+    guess.all? { |number| number.between?(1,6) }
   end
 
   def check_guess(player_guess)
@@ -77,11 +100,6 @@ class Game
     matches
   end
 
-  def valid_guess?(guess)
-    return false unless guess.length == 4
-    guess.all? { |number| number.between?(1,6) }
-  end
-
   def win?
     hint.exact == 4
   end
@@ -95,10 +113,20 @@ class Game
   end
 
   def play
-    # Display.instructions(COLORS)
-    # choose_role
-    # until win? 
-      # Display.turn
-      # guess
+    display.instructions
+
+    choose_role
+
+    if player.breaker
+      until win?
+        player_guess = guess
+        display.display_results(player_guess, hint)
+      end
+
+      display.winner(turn)
+
+      answer = display.another_round?
+      play_again?(answer)
+    end
   end
 end

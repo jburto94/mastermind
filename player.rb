@@ -1,7 +1,7 @@
 class Player
-  attr_writer :breaker
-  
+  attr_accessor :breaker
+
   def initialize
-    @breaker = false
+    @breaker = true
   end
 end
