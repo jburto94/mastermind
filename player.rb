@@ -1,5 +1,7 @@
 class Player
-  def initialize(role)
-    @role = role
+  attr_writer :breaker
+  
+  def initialize
+    @breaker = false
   end
 end

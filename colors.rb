@@ -1,24 +1,34 @@
 class Colors
   attr_reader :keys
-  
+
+  COLORED_KEYS = [
+    {
+      color: :red,
+      val: 1
+    },
+    {
+      color: :cyan,
+      val: 2
+    },
+    {
+      color: :light_red,
+      val: 3
+    },
+    {
+      color: :green,
+      val: 4
+    },
+    {
+      color: :blue,
+      val: 5
+    },
+    {
+      color: :magenta,
+      val: 6
+    }
+  ]
+
   def initialize
-    @keys = Colors.randomize_keys
+    @keys = COLORED_KEYS
   end
-
-  def self.randomize_colors
-    [:red, :blue, :green, :yellow, :orange, :purple].shuffle
-  end
-  
-  def self.randomize_keys
-    colors = Colors.randomize_colors
-    color_keys = []
-    (1..6).each do |num|
-      color_keys.push({
-        color: colors.pop,
-        val: num
-      })
-    end
-
-    color_keys
-  end 
 end
