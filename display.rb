@@ -38,6 +38,12 @@ class Display
     puts "The guess had 2 correct numbers/colors in the correct location and 1 correct number/color in the wrong location."
   end
 
+  def computer_display(turn, colors, hint)
+    puts "Computer turn ##{turn}:"
+    display_guess(colors)
+    display_hint(hint)
+  end
+
   def display_guess(colors)
     colors.each do |color|
       print "  #{color[:val]}  ".colorize(:background => color[:color])
@@ -82,6 +88,10 @@ class Display
 
   def winner(turn)
     puts "You cracked the code in just #{turn} turns!"
+  end
+
+  def computer_win(turn)
+    puts "The computer cracked your code in #{turn} turns."
   end
 
   def another_round?
