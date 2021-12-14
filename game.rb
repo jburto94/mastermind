@@ -84,13 +84,9 @@ class Game
       player_guess = computer.generate_guess
     end
     
-    p "before check_guess: #{player_guess}"
     check_guess(player_guess)
-    p "after check_guess: #{player_guess}"
 
     guess_codes = generate_keys(player_guess)
-
-    guess_codes
   end
 
   def valid_code?(guess)
@@ -114,7 +110,6 @@ class Game
     hint.exact, = 0
     hint.similar = 0
     updated_guess = check_exact(player_guess)
-    p updated_guess
     check_similar(updated_guess)
     player_guess
   end
@@ -159,8 +154,15 @@ class Game
     hint.exact == 4
   end
 
+  def reset
+    @turn = 0
+    hint.exact = 0
+    @code = Game.generate_colors
+  end
+
   def play_again?(answer)
     if answer == "y" || answer == "Y"
+      reset
       play
     else
       system("clear")
