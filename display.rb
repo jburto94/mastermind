@@ -41,7 +41,9 @@ class Display
   def computer_display(turn, colors, hint)
     puts "Computer turn ##{turn}:"
     display_guess(colors)
+    print "   "
     display_hint(hint)
+    puts
   end
 
   def display_guess(colors)

@@ -1,55 +1,71 @@
 class Computer
-  attr_accessor :code_key, :code_tracker, :skip
+  attr_accessor :correct, :previous_guesses, :skip
   def initialize
-    @code_key = Hash.new
-    @code_tracker = Hash.new { Array.new }
-    @skip = Array.new
+    @correct = Array.new(4, nil) 
+    @previous_guesses = []
+    @skip = []
   end
 
-  def handle_exact(code, idx)
-    @code_key[idx] = code
+  def handle_correct(value, guess)
+    guess == value
   end
 
-  def handle_tracker(indices)
-    # @code_tracker[code] = ?|indices
+  def correct_counter
+    valid_nums = correct.select { |n| n }
+    valid_nums.count
+  end
+
+  def incorrect_counter(guess)
+    count = 0
+    guess.each_with_index do |val, idx| 
+      count += 1 unless val = correct[idx] || skip.include?(val)
+    end
+    count
+  end
+
+
+  def handle_skip(code_vals, guess)
+    skip.include?(guess) || code_vals.include?(guess)
+  end
+
+  def check(game_code, guess)
+    code_vals = game_code.map { |color| color[:val] }
+    guess.each_with_index do |val, idx|
+      @correct[idx] = val if handle_correct(code_vals[idx], val)
+      @skip << val unless handle_skip(code_vals, val)
+    end
   end
 
   def generate_guess
-    guess = []
-    (1..4).each do |idx|
-      if code_key[idx]
-        guess << code_key[idx]
-      else
-        tracked = track_code(idx)
-
-        next if tracked
-
-        code = random_code
-        guess << code
+    new_guess = Array.new(4, nil)
+    loop do
+      (0..3).each do |idx|
+        if correct[idx]
+          new_guess[idx] = correct[idx]
+        else
+          num = random_code
+          new_guess[idx] = num
+        end
       end
+
+      break unless previous_guesses.include?(new_guess)
     end
 
-    guess
-  end
-
-  def track_code(index)
-    tracked = false
-    code_tracker.each do |code, wrong_loc|
-      unless wrong_loc.include?(idx)
-        guess << code
-        tracked = true
-        break
-      end
-    end
-
-    tracked
+    previous_guesses << new_guess
+    new_guess
   end
 
   def random_code
-    code = rand(1..6)
-    until !skip.include?(code)
-      code = rand(1..6)
+    new_code = rand(1..6)
+    until !skip.include?(new_code)
+      new_code = rand(1..6)
     end
-    code
+    new_code
+  end
+
+  def clear_data
+    @correct = Array.new(4, nil) 
+    @incorrect = Hash.new { Array.new }
+    @skip = Array.new
   end
 end

@@ -80,11 +80,14 @@ class Game
           puts "Your code must be 4 digits, using numbers 1-6.".colorize(:red)
         end
       end
+      
+      check_guess(player_guess)
     else
       player_guess = computer.generate_guess
+      computer.check(code, player_guess)
+      hint.exact = computer.correct_counter
+      hint.similar = computer.incorrect_counter(player_guess)
     end
-    
-    check_guess(player_guess)
 
     guess_codes = generate_keys(player_guess)
   end
@@ -107,7 +110,7 @@ class Game
   end
 
   def check_guess(player_guess)
-    hint.exact, = 0
+    hint.exact = 0
     hint.similar = 0
     updated_guess = check_exact(player_guess)
     check_similar(updated_guess)
@@ -157,6 +160,7 @@ class Game
   def reset
     @turn = 0
     hint.exact = 0
+    computer.clear_data
     @code = Game.generate_colors
   end
 
@@ -186,6 +190,7 @@ class Game
       until win?
         computer_guess = guess
         display.computer_display(turn, computer_guess, hint)
+        sleep(2)
       end
 
       display.computer_win(turn)
